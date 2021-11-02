@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper2", "Minesweeper\Minesweeper2.csproj", "{35BB6384-6827-468B-A659-F4D869C2B831}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper", "..\..\minesweeper\Minesweeper.csproj", "{8829D35E-E3B0-4398-A617-AC347E291E80}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Minesweeper", "Minesweeper\Minesweeper.csproj", "{8829D35E-E3B0-4398-A617-AC347E291E80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{35BB6384-6827-468B-A659-F4D869C2B831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35BB6384-6827-468B-A659-F4D869C2B831}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35BB6384-6827-468B-A659-F4D869C2B831}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35BB6384-6827-468B-A659-F4D869C2B831}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8829D35E-E3B0-4398-A617-AC347E291E80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8829D35E-E3B0-4398-A617-AC347E291E80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8829D35E-E3B0-4398-A617-AC347E291E80}.Release|Any CPU.ActiveCfg = Release|Any CPU
