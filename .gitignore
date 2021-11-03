@@ -9,3 +9,6 @@ Minesweeper/bin/debug/*
 !Minesweeper/bin/debug/image
 !Minesweeper/bin/debug/sound
 !Minesweeper/bin/debug/score.txt
+
+/API/__pycache__
+/Minesweeper/bin/Debug/score.txt
