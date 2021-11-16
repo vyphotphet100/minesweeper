@@ -9,8 +9,8 @@ namespace Minesweeper.Dtos
     class ProblemDto
     {
         //This object should be convert to json and send to API
-        public List<List<int>> state { get; set; }
-        public string mine { get; set; }
+        public int[,] state { get; set; }
+        public int mine { get; set; }
 
         // Compatiple json 
         //{

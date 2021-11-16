@@ -1,5 +1,4 @@
 import flask as fl
-import json
 
 app = fl.Flask(__name__)
 app.config["DEBUG"] = True
@@ -12,21 +11,31 @@ def home():
 
 action = {
     "X": "1",
-    "Y": "2"
+    "Y": "2",
+    "task": "-1"
 }
 
 
-@app.route('/actionTest', methods=['GET'])
+@app.route('/gethint', methods=['POST'])
 def acitonTest():
-    action
+    data = fl.request.get_json()
+    print(data)
     return fl.jsonify(action)
 
 
-@app.route('/stateTest', methods=['GET'])
-def stateTest():
-    data = fl.request.json()
-    print(data)
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+# @app.route('/thien', methods=['POST'])
+# def stateTest():
+#     data = fl.request.get_json()
+#     # Call you fuction here and return action to client
+
+#     return data
+
+# @app.route('/dat', methods=['POST'])
+# def stateTest():
+#     data = fl.request.get_json()
+#     # Call you fuction here and return action to client
+
+#     return data
 
 
 app.run()

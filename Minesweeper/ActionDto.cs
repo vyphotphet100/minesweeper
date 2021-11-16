@@ -10,8 +10,8 @@ namespace Minesweeper.Dtos
     {
         // the X Y is the coordinay of the click action 
         //    that sent in the json format from the api
-        public string X { get; set; }
-        public string Y { get; set; }
-        public string task { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int task { get; set; }
     }
 }

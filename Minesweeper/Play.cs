@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Minesweeper.Dtos;
 
 namespace Minesweeper
 {
@@ -28,6 +29,7 @@ namespace Minesweeper
         private void btn_Click(object sender, EventArgs e)
         {
             tmr.Start();
+            FindWay();
         }
 
         private void button1_MouseClick(object sender, MouseEventArgs e)
@@ -38,7 +40,7 @@ namespace Minesweeper
 
         private void tmr_Tick(object sender, EventArgs e)
         {
-            FindWay();
+            //FindWay();
         }
 
 
@@ -454,277 +456,49 @@ namespace Minesweeper
             btnHome.Focus();
         }
 
-        void FindWay()
+        async void FindWay()
         {
             // Chuyển đổi bảng
-            float[,] boardPlayed = new float[heightT, widthT];
+            int[,] boardPlayed = new int[heightT, widthT];
             for (int i = 0; i < heightT; i++)
             {
                 for (int j = 0; j < widthT; j++)
                 {
                     if (btnBox[i, j].Name == "nonFlag")
-                        boardPlayed[i, j] = 0;
-                    else if (btnBox[i, j].Name == "flag")
+                        //Chưa mở
                         boardPlayed[i, j] = -2;
+                    else if (btnBox[i, j].Name == "flag")
+                        //Chưa mở có đặt cờ
+                        boardPlayed[i, j] = -1;
                     else if (btnBox[i, j].Name == "opened")
                     {
                         if (btnBox[i, j].Text != " " && btnBox[i, j].Text != "")
+                            //Đã mở mà có số
                             boardPlayed[i, j] = int.Parse(btnBox[i, j].Text);
                         else
-                            boardPlayed[i, j] = -1;
+                            //Đã mở mà không gắn số
+                            boardPlayed[i, j] = 0;
                     }
                 }
             }
 
-            // Tìm ô chắc chắn không có mìn và mở nó
-            // Duyệt lần lượt các ô có giá trị từ 1 -> 8
-            for (int i=0; i<heightT; i++)
+            ProblemDto problem = new ProblemDto()
             {
-                for (int j=0; j<widthT; j++)
-                {
-                    if (boardPlayed[i, j] == 1)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 1 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 2)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 2 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 3)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 3 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 4)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 4 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 5)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 5 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 6)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 6 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 7)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 7 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 8)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 8 && CountNonFlagBox(boardPlayed, i, j) > 0)
-                        {
-                            ClickFirstNonFlag(boardPlayed, i, j);
-                            return;
-                        }
-                    }
-                }
-            }
+                state = boardPlayed,
+                mine = this.mine
+            };
 
+            var action = await ApiGateway.GetHintAsync(problem);
 
-            // Nếu không tìm được ô chắc chắn không có mìn
-            // Đánh giá khả năng có mìn của từng ô
+            MessageBox.Show("X: " + action.X + "\nY: " + action.Y + "\naction: " + action.task);
 
-            for (int i=0; i<heightT; i++)
+            if(action.task == 1)
             {
-                for (int j=0; j<widthT; j++)
-                {
-                    if (boardPlayed[i, j] == 0)
-                    {
-                        if (i - 1 >= 0 && j - 1 >= 0 &&
-                            boardPlayed[i - 1, j - 1] > 0 && boardPlayed[i - 1, j - 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (i - 1 >= 0 && 
-                            boardPlayed[i - 1, j] > 0 && boardPlayed[i - 1, j] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (i - 1 >= 0 && j + 1 < widthT &&
-                            boardPlayed[i - 1, j + 1] > 0 && boardPlayed[i - 1, j + 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (j + 1 < widthT &&
-                            boardPlayed[i, j + 1] > 0 && boardPlayed[i, j + 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (i + 1 < heightT && j + 1 < widthT &&
-                            boardPlayed[i + 1, j + 1] > 0 && boardPlayed[i + 1, j + 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (i + 1 < heightT &&
-                            boardPlayed[i + 1, j] > 0 && boardPlayed[i + 1, j] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (i + 1 < heightT && j - 1 >= 0 &&
-                            boardPlayed[i + 1, j - 1] > 0 && boardPlayed[i + 1, j - 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                        if (j - 1 >= 0 &&
-                            boardPlayed[i, j - 1] > 0 && boardPlayed[i, j - 1] <= 8)
-                            boardPlayed[i, j] += 10;
-                    }
-                    
-                }
-               
-            }
-
-            // Duyệt lần lượt các ô có giá trị từ 1 -> 8
-            for (int i = 0; i < heightT; i++)
+                box_click(action.X, action.Y);
+            }else if(action.task == -1)
             {
-                for (int j = 0; j < widthT; j++)
-                {
-                    if (boardPlayed[i, j] == 1)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 0 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 2)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 1 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 3)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 2 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 4)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 3 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 5)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 4 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 6)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 5 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 7)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 6 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-                    else if (boardPlayed[i, j] == 8)
-                    {
-                        if (CountMineAround(boardPlayed, i, j) == 7 && CountNonFlagBox(boardPlayed, i, j) == 1)
-                        {
-                            int i0 = -1, j0 = -1;
-                            GetFirstNonFlag(boardPlayed, i, j, ref i0, ref j0);
-                            SetFlag(i0, j0);
-                            CountFlag();
-                            return;
-                        }
-                    }
-
-                    if (boardPlayed[i, j] >= 1 && boardPlayed[i, j] <= 8)
-                    {
-                        int nMine = CountMineAround(boardPlayed, i, j);
-                        int nNonFlag = CountNonFlagBox(boardPlayed, i, j);
-                        if (nMine != boardPlayed[i, j] && nNonFlag != 0)
-                        {
-                            float avgIdx = ((boardPlayed[i, j] - nMine) * 10) / nNonFlag;
-                            PlusAvgIdx(boardPlayed, i, j, avgIdx);
-                        }
-                    }
-                }
+                box_RightClick(action.X, action.Y);
             }
-
-            // Tìm chỉ số lớn nhất
-            txb.Text = "";
-            float maxVal_Mine = -1;
-            for (int i=0; i<heightT; i++)
-            {
-                for (int j=0; j<widthT; j++)
-                {
-                    if (maxVal_Mine < boardPlayed[i, j])
-                        maxVal_Mine = boardPlayed[i, j];
-                    txb.Text += boardPlayed[i, j] + " ";
-                }
-                txb.Text += Environment.NewLine;
-            }
-
-
-            // SetFlag ô có khả năng có mìn cao nhất (maxVal_Mine)
-            for (int i = 0; i < heightT; i++)
-            {
-                for (int j = 0; j < widthT; j++)
-                {
-                    if (boardPlayed[i, j] == maxVal_Mine)
-                    {
-                        SetFlag(i, j);
-                        CountFlag();
-                        return;
-                    }
-                }
-            }
-
         }
 
         int CountMineAround(float[,] boardPlayed, int i, int j)
