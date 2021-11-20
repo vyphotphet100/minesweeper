@@ -547,7 +547,7 @@ namespace Minesweeper
             tmr.Stop();
 
             MessBox messBox = new MessBox();
-            messBox.lb.Text = "Mày hành tao như thế đủ chưa??";
+            messBox.lb.Text = "You won?";
             messBox.Show();
         }
 
